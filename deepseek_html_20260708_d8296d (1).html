@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>C# & Full-Stack Tutorial - ગુજરાતી</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ---------- RESET & BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a2a6c;
+            --secondary: #b21f1f;
+            --accent: #fdbb2d;
+            --bg: #f4f6fb;
+            --card-bg: #ffffff;
+            --text: #1e1e2f;
+            --text-light: #4a4a6a;
+            --border: #dce0e9;
+            --code-bg: #1e1e2f;
+            --code-text: #d4d4d4;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --sidebar-width: 280px;
+            --header-height: 64px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ---------- SIDEBAR ---------- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            z-index: 1000;
+            padding: 20px 0 30px;
+            transition: transform 0.3s ease;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.04);
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-header i {
+            font-size: 28px;
+            color: var(--primary);
+            background: var(--accent);
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .sidebar-header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .sidebar-header span {
+            font-size: 12px;
+            color: var(--text-light);
+            display: block;
+            font-weight: 400;
+        }
+
+        .sidebar-nav {
+            padding: 12px 8px 20px;
+        }
+
+        .sidebar-nav .topic-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .sidebar-nav .topic-link:hover {
+            background: #f0f2f7;
+            color: var(--primary);
+        }
+
+        .sidebar-nav .topic-link.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(26, 42, 108, 0.25);
+        }
+
+        .sidebar-nav .topic-link .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--border);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-light);
+            transition: 0.2s;
+        }
+
+        .sidebar-nav .topic-link.active .num {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .sidebar-nav .topic-link .icon {
+            font-size: 16px;
+            width: 22px;
+            text-align: center;
+        }
+
+        /* ---------- MAIN CONTENT ---------- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 30px 40px 80px;
+            max-width: calc(100% - var(--sidebar-width));
+        }
+
+        /* ---------- TOPIC CARD ---------- */
+        .topic-card {
+            display: none;
+            animation: fadeUp 0.4s ease;
+        }
+
+        .topic-card.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .topic-card .topic-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .topic-card .topic-header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .topic-card .topic-header .badge {
+            font-size: 14px;
+            background: var(--accent);
+            color: var(--primary);
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        .topic-card .topic-header .subtitle {
+            color: var(--text-light);
+            margin-top: 6px;
+            font-size: 16px;
+        }
+
+        .topic-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 32px 0 14px;
+            color: var(--primary);
+        }
+
+        .topic-card h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 24px 0 10px;
+            color: var(--text);
+        }
+
+        .topic-card p,
+        .topic-card li {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+        }
+
+        .topic-card ul,
+        .topic-card ol {
+            padding-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        .topic-card li {
+            margin-bottom: 6px;
+        }
+
+        .topic-card strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin: 20px 0;
+            border-left: 5px solid var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .info-box.guj {
+            border-left-color: var(--accent);
+            background: #fffcf0;
+        }
+
+        .info-box.eng {
+            border-left-color: #2e7d32;
+            background: #f0f7f0;
+        }
+
+        .info-box .label {
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px 24px;
+            border-radius: var(--radius);
+            overflow-x: auto;
+            font-size: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            line-height: 1.6;
+            margin: 16px 0;
+            position: relative;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        pre .lang-tag {
+            position: absolute;
+            top: 10px;
+            right: 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .output-block {
+            background: #f0f2f7;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--text);
+            margin: 8px 0 16px;
+            border: 1px solid var(--border);
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        .output-block strong {
+            color: var(--primary);
+        }
+
+        .topic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 24px;
+            font-size: 15px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        .topic-table thead {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .topic-table th,
+        .topic-table td {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .topic-table tbody tr:hover {
+            background: #f8f9fd;
+        }
+
+        .topic-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 16px 0;
+        }
+
+        .two-col .col {
+            background: var(--card-bg);
+            padding: 18px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .two-col .col h4 {
+            margin-top: 0;
+            font-size: 16px;
+        }
+
+        .flow-chart {
+            background: var(--card-bg);
+            padding: 16px 20px;
+            border-radius: var(--radius);
+            text-align: center;
+            font-family: monospace;
+            border: 1px dashed var(--border);
+            margin: 16px 0;
+        }
+
+        .plan-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .plan-grid .week {
+            background: var(--card-bg);
+            padding: 16px 18px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
+        }
+
+        .plan-grid .week h4 {
+            margin-top: 0;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 30px 0;
+        }
+
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1100;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            color: var(--primary);
+            transition: 0.2s;
+        }
+
+        .hamburger:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                max-width: 100%;
+                padding: 20px;
+            }
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+            .plan-grid {
+                grid-template-columns: 1fr;
+            }
+            .topic-card .topic-header h2 {
+                font-size: 24px;
+                flex-wrap: wrap;
+            }
+            .hamburger {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .topic-card .topic-header h2 {
+                font-size: 20px;
+            }
+            pre {
+                font-size: 12px;
+                padding: 14px 16px;
+            }
+            .topic-table {
+                font-size: 13px;
+            }
+            .topic-table th,
+            .topic-table td {
+                padding: 8px 12px;
+            }
+        }
+
+        @media print {
+            .sidebar,
+            .hamburger {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                max-width: 100% !important;
+                padding: 20px !important;
+            }
+            .topic-card {
+                display: block !important;
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-code"></i>
+            <div>
+                <h1>C# & Full-Stack</h1>
+                <span>ગુજરાતી + English • 35 Topics</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav" id="sidebarNav"></nav>
+    </aside>
+
+    <main class="main-content" id="mainContent"></main>
+
+    <script>
+        // ============================================================
+        //  DATA — 35 Topics (all content stored as strings)
+        // ============================================================
+
+        const TOPICS = [{
+            id: 'variables',
+            num: 1,
+            icon: 'fa-solid fa-box',
+            label: 'Variables',
+            gujarati: 'વેરિયેબલ્સ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-box" style="color:#1a2a6c;"></i> 1. Variables <span class="badge">વેરિયેબલ્સ</span></h2><div class="subtitle">Variable એટલે ડેટા (માહિતી) સંગ્રહ કરવાની જગ્યા (Memory Location).</div></div><h3>Variable એટલે શું?</h3><p>Variable એટલે એક ડબ્બો (Box) જેમાં આપણે કોઈપણ કિંમત (Value) રાખી શકીએ.</p><div class="info-box guj"><span class="label">📦 ઉદાહરણ</span><strong>નામ</strong> = "રાહુલ"<br /><strong>ઉંમર</strong> = 25<br /><strong>પગાર</strong> = 35000</div><p><strong>અહીં:</strong><br />નામ એક Variable છે<br />ઉંમર એક Variable છે<br />પગાર એક Variable છે</p><h3>Real Life Example</h3><p>માનો તમારી પાસે ત્રણ બોક્સ છે. દરેક બોક્સનું નામ છે: <strong>Name</strong>, <strong>Age</strong>, <strong>Salary</strong>.</p><h3>C# Syntax</h3><pre><span class="lang-tag">C#</span>datatype variableName = value;</pre><h4>Example</h4><pre><span class="lang-tag">C#</span>using System; class Program { static void Main() { string name = "Rahul"; Console.WriteLine(name); } }</pre><div class="output-block"><strong>Output:</strong> Rahul</div><h3>Variable Naming Rules</h3><div class="two-col"><div class="col"><h4>✅ સાચું</h4><ul><li>name</li><li>studentName</li><li>age</li><li>totalMarks</li></ul></div><div class="col"><h4>❌ ખોટું</h4><ul><li>123name</li><li>student-name</li><li>class</li><li>int</li></ul></div></div><div class="info-box"><span class="label">💼 Interview Question</span><strong>Variable શું છે?</strong><br /><strong>જવાબ:</strong> Variable એ Memory માં બનાવેલી જગ્યા છે જ્યાં Program દરમિયાન Data Store થાય છે.</div>`
+        }, {
+            id: 'datatypes',
+            num: 2,
+            icon: 'fa-solid fa-database',
+            label: 'Data Types',
+            gujarati: 'ડેટા ટાઇપ્સ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-database" style="color:#1a2a6c;"></i> 2. Data Types <span class="badge">ડેટા ટાઇપ્સ</span></h2><div class="subtitle">Data Type એ Variable નો પ્રકાર છે જે બતાવે છે કે તેમાં કયા પ્રકારનો ડેટા સ્ટોર થશે.</div></div><h3>Data Type એટલે શું?</h3><p>Data Type એ Variable માટે એક નિયમ છે જે કહે છે કે Variable કયા પ્રકારની કિંમત સ્ટોર કરી શકે છે.</p><h3>મુખ્ય Data Types</h3><table class="topic-table"><thead><tr><th>Type</th><th>Size</th><th>Example</th></tr></thead><tbody><tr><td>int</td><td>4 bytes</td><td>int age = 25;</td></tr><tr><td>double</td><td>8 bytes</td><td>double price = 99.99;</td></tr><tr><td>float</td><td>4 bytes</td><td>float pi = 3.14f;</td></tr><tr><td>char</td><td>2 bytes</td><td>char grade = 'A';</td></tr><tr><td>string</td><td>variable</td><td>string name = "Rahul";</td></tr><tr><td>bool</td><td>1 byte</td><td>bool isActive = true;</td></tr><tr><td>decimal</td><td>16 bytes</td><td>decimal amount = 100.50m;</td></tr></tbody></table><div class="info-box"><span class="label">💡 Important</span>C# is a <strong>strongly-typed</strong> language.</div>`
+        }, {
+            id: 'classesobjects',
+            num: 3,
+            icon: 'fa-solid fa-cubes',
+            label: 'Classes & Objects',
+            gujarati: 'ક્લાસ અને ઑબ્જેક્ટ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-cubes" style="color:#1a2a6c;"></i> 3. Classes &amp; Objects <span class="badge">ક્લાસ અને ઑબ્જેક્ટ</span></h2><div class="subtitle">Class એ Blueprint છે, Object એ તેનું Real-world Instance છે.</div></div><h3>Class એટલે શું?</h3><p>Class એ એક Blueprint છે જેમાં Variables (Fields) અને Methods (Functions) હોય છે.</p><h3>Object એટલે શું?</h3><p>Object એ Class નું Instance છે.</p><h3>Example</h3><pre><span class="lang-tag">C#</span>class Car { public string model; public void Drive() { Console.WriteLine("Driving..."); } } Car myCar = new Car(); myCar.model = "Tesla"; myCar.Drive();</pre><div class="output-block"><strong>Output:</strong> Driving...</div>`
+        }, {
+            id: 'constructors',
+            num: 4,
+            icon: 'fa-solid fa-hammer',
+            label: 'Constructors',
+            gujarati: 'કન્સ્ટ્રક્ટર્સ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-hammer" style="color:#1a2a6c;"></i> 4. Constructors <span class="badge">કન્સ્ટ્રક્ટર્સ</span></h2><div class="subtitle">Constructor એ Special Method છે જે Object બને ત્યારે Auto Call થાય છે.</div></div><h3>Constructor એટલે શું?</h3><p>Constructor એ Class ની Special Method છે જે Object Create થાય ત્યારે Automatically Call થાય છે.</p><h3>Example</h3><pre><span class="lang-tag">C#</span>class Student { public string name; public Student(string n) { name = n; } } Student s = new Student("Rahul");</pre>`
+        }, {
+            id: 'properties',
+            num: 5,
+            icon: 'fa-solid fa-gear',
+            label: 'Properties',
+            gujarati: 'પ્રોપર્ટીઝ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-gear" style="color:#1a2a6c;"></i> 5. Properties <span class="badge">પ્રોપર્ટીઝ</span></h2><div class="subtitle">Properties એ Fields ને Access કરવા માટેનું Smart Mechanism છે.</div></div><h3>Property એટલે શું?</h3><p>Property એ Class ના Private Fields ને Access કરવા માટે <code>get</code> અને <code>set</code> Accessors આપે છે.</p><pre><span class="lang-tag">C#</span>public class Person { public string Name { get; set; } }</pre>`
+        }, {
+            id: 'encapsulation',
+            num: 6,
+            icon: 'fa-solid fa-shield',
+            label: 'Encapsulation',
+            gujarati: 'એન્કેપ્સ્યુલેશન',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-shield" style="color:#1a2a6c;"></i> 6. Encapsulation <span class="badge">એન્કેપ્સ્યુલેશન</span></h2><div class="subtitle">Encapsulation એ Data અને Methods ને એક Unit માં બાંધીને બહારથી Access નિયંત્રિત કરે છે.</div></div><h3>Encapsulation એટલે શું?</h3><p>Encapsulation એ OOP નો મુખ્ય સિદ્ધાંત છે જે Data (Fields) ને બહારથી Direct Access થવાથી બચાવે છે.</p><div class="info-box"><span class="label">💡 Key Point</span>Encapsulation = <strong>Data Hiding + Abstraction</strong>.</div>`
+        }, {
+            id: 'inheritance',
+            num: 7,
+            icon: 'fa-solid fa-sitemap',
+            label: 'Inheritance',
+            gujarati: 'ઇન્હેરિટન્સ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-sitemap" style="color:#1a2a6c;"></i> 7. Inheritance <span class="badge">ઇન્હેરિટન્સ</span></h2><div class="subtitle">Inheritance એ એક Class ને બીજી Class માંથી Members મેળવવાની ક્ષમતા છે.</div></div><h3>Inheritance એટલે શું?</h3><p>એક Class (Child) બીજી Class (Parent) ના Members ને Inherit કરી શકે છે.</p><pre><span class="lang-tag">C#</span>class Animal { public void Eat() { } } class Dog : Animal { public void Bark() { } }</pre><div class="info-box guj"><span class="label">📘 ગુજરાતી</span>Inheritance એ <strong>"is-a"</strong> relationship છે. Dog <strong>is an</strong> Animal.</div>`
+        }, {
+            id: 'polymorphism',
+            num: 8,
+            icon: 'fa-solid fa-dice',
+            label: 'Polymorphism',
+            gujarati: 'પોલીમોર્ફિઝમ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-dice" style="color:#1a2a6c;"></i> 8. Polymorphism <span class="badge">પોલીમોર્ફિઝમ</span></h2><div class="subtitle">Polymorphism એટલે એક જ Method / Object વિવિધ રીતે વર્તી શકે.</div></div><h3>Polymorphism એટલે શું?</h3><p>એક જ Method Name અલગ-અલગ Classes માં અલગ-અલગ રીતે કામ કરી શકે છે.</p><pre><span class="lang-tag">C#</span>class Animal { public virtual void Sound() { } } class Dog : Animal { public override void Sound() { Console.WriteLine("Bark"); } }</pre>`
+        }, {
+            id: 'abstraction',
+            num: 9,
+            icon: 'fa-solid fa-eye-slash',
+            label: 'Abstraction',
+            gujarati: 'એબ્સ્ટ્રેક્શન',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-eye-slash" style="color:#1a2a6c;"></i> 9. Abstraction <span class="badge">એબ્સ્ટ્રેક્શન</span></h2><div class="subtitle">Abstraction એટલે જટિલ Details છુપાવીને ફક્ત Essential Features બતાવવા.</div></div><h3>Abstraction એટલે શું?</h3><p>Abstraction એ Implementation Details છુપાવે છે અને ફક્ત Functional Interface બતાવે છે.</p><div class="info-box"><span class="label">💡 Key Difference</span><strong>Abstract Class</strong> — Partial Implementation.<br /><strong>Interface</strong> — 100% Abstract.</div>`
+        }, {
+            id: 'interfaces',
+            num: 10,
+            icon: 'fa-solid fa-plug',
+            label: 'Interfaces',
+            gujarati: 'ઇન્ટરફેસિસ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-plug" style="color:#1a2a6c;"></i> 10. Interfaces <span class="badge">ઇન્ટરફેસિસ</span></h2><div class="subtitle">Interface એ Contract છે જે Class Implement કરવી જ પડે.</div></div><h3>Interface એટલે શું?</h3><p>Interface એ 100% Abstract Blueprint છે.</p><pre><span class="lang-tag">C#</span>interface IVehicle { void Start(); } class Car : IVehicle { public void Start() { } }</pre>`
+        }, {
+            id: 'generics',
+            num: 11,
+            icon: 'fa-solid fa-arrows',
+            label: 'Generics',
+            gujarati: 'જેનરિક્સ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-arrows" style="color:#1a2a6c;"></i> 11. Generics <span class="badge">જેનરિક્સ</span></h2><div class="subtitle">Generics એ Type-Safe Code લખવા માટેની ટેકનીક છે.</div></div><h3>Generics એટલે શું?</h3><p>Generics એ Classes, Methods, Interfaces ને Type સાથે Parameterize કરે છે.</p><pre><span class="lang-tag">C#</span>class GenericClass<T> { private T data; } GenericClass<int> obj = new GenericClass<int>(100);</pre>`
+        }, {
+            id: 'collections',
+            num: 12,
+            icon: 'fa-solid fa-list',
+            label: 'Collections',
+            gujarati: 'કલેક્શન્સ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-list" style="color:#1a2a6c;"></i> 12. Collections <span class="badge">કલેક્શન્સ</span></h2><div class="subtitle">Collections એ Group of Objects ને Manage કરવા માટેની Classes છે.</div></div><h3>Collections એટલે શું?</h3><p>Collections એ Data Structures છે જે Objects ના Group ને Store, Manage અને Manipulate કરે છે.</p><ul><li>List&lt;T&gt; — Dynamic Array</li><li>Dictionary&lt;TKey, TValue&gt; — Key-Value Pairs</li><li>Queue&lt;T&gt; — FIFO</li><li>Stack&lt;T&gt; — LIFO</li></ul>`
+        }, {
+            id: 'delegates',
+            num: 13,
+            icon: 'fa-solid fa-arrow-right-arrow-left',
+            label: 'Delegates',
+            gujarati: 'ડેલિગેટ્સ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-arrow-right-arrow-left" style="color:#1a2a6c;"></i> 13. Delegates <span class="badge">ડેલિગેટ્સ</span></h2><div class="subtitle">Delegate એ Type-Safe Function Pointer છે જે Method(s) નો Reference Store કરે છે.</div></div><h3>Delegate એટલે શું?</h3><p>Delegate એ Type-Safe Function Pointer છે.</p><pre><span class="lang-tag">C#</span>delegate void MyDelegate(); MyDelegate del = Display; del();</pre><div class="info-box"><span class="label">💼 Interview Question</span>"A delegate is a type-safe function pointer that references one or more methods with the same signature."</div>`
+        }, {
+            id: 'events',
+            num: 14,
+            icon: 'fa-solid fa-bell',
+            label: 'Events',
+            gujarati: 'ઇવેન્ટ્સ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-bell" style="color:#1a2a6c;"></i> 14. Events <span class="badge">ઇવેન્ટ્સ</span></h2><div class="subtitle">Event એ Action છે જે કંઈક થાય ત્યારે ફાયર થાય છે.</div></div><h3>Event એટલે શું?</h3><p>Event એ Class ની Notification Mechanism છે.</p><pre><span class="lang-tag">C#</span>public event EventHandler MyEvent; MyEvent?.Invoke(this, EventArgs.Empty);</pre>`
+        }, {
+            id: 'exceptionhandling',
+            num: 15,
+            icon: 'fa-solid fa-triangle-exclamation',
+            label: 'Exception Handling',
+            gujarati: 'એક્સેપ્શન હેન્ડલિંગ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-triangle-exclamation" style="color:#1a2a6c;"></i> 15. Exception Handling <span class="badge">એક્સેપ્શન હેન્ડલિંગ</span></h2><div class="subtitle">Exception Handling એ Runtime Errors ને Manage કરવાની ટેકનીક છે.</div></div><h3>Exception એટલે શું?</h3><p>Exception એ Runtime Error છે.</p><pre><span class="lang-tag">C#</span>try { int c = 10 / 0; } catch (DivideByZeroException ex) { Console.WriteLine("Error"); } finally { Console.WriteLine("Cleanup"); }</pre>`
+        }, {
+            id: 'filehandling',
+            num: 16,
+            icon: 'fa-solid fa-file',
+            label: 'File Handling',
+            gujarati: 'ફાઇલ હેન્ડલિંગ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-file" style="color:#1a2a6c;"></i> 16. File Handling <span class="badge">ફાઇલ હેન્ડલિંગ</span></h2><div class="subtitle">File Handling એ Files ને Read / Write / Delete કરવાની ક્ષમતા છે.</div></div><h3>File Handling એટલે શું?</h3><p>File Handling એ Files સાથે Data Read, Write, Append, Delete જેવી Operations છે.</p><pre><span class="lang-tag">C#</span>File.WriteAllText("test.txt", "Hello"); string content = File.ReadAllText("test.txt");</pre>`
+        }, {
+            id: 'linq',
+            num: 17,
+            icon: 'fa-solid fa-code-branch',
+            label: 'LINQ',
+            gujarati: 'લિન્ક',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-code-branch" style="color:#1a2a6c;"></i> 17. LINQ <span class="badge">લિન્ક</span></h2><div class="subtitle">LINQ (Language Integrated Query) એ C# માં Query Writing માટેની ટેકનીક છે.</div></div><h3>LINQ એટલે શું?</h3><p>LINQ એ C# માં SQL જેવી Queries લખવાની સુવિધા છે.</p><pre><span class="lang-tag">C#</span>List<int> numbers = new List<int> { 5, 10, 15, 20, 25 }; var even = numbers.Where(x => x % 2 == 0);</pre>`
+        }, {
+            id: 'lambdaexpressions',
+            num: 18,
+            icon: 'fa-solid fa-arrow-right',
+            label: 'Lambda Expressions',
+            gujarati: 'લેમ્બડા એક્સપ્રેશન્સ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-arrow-right" style="color:#1a2a6c;"></i> 18. Lambda Expressions <span class="badge">લેમ્બડા એક્સપ્રેશન્સ</span></h2><div class="subtitle">Lambda Expression એ Anonymous Function છે જે =&gt; Operator નો ઉપયોગ કરે છે.</div></div><h3>Lambda Expression એટલે શું?</h3><p>Lambda Expression એ Anonymous Method છે જે <strong>=&gt;</strong> (goes to) Operator વાપરે છે.</p><pre><span class="lang-tag">C#</span>Func<int, int> square = x => x * x; Console.WriteLine(square(5)); // 25</pre>`
+        }, {
+            id: 'asyncawait',
+            num: 19,
+            icon: 'fa-solid fa-clock',
+            label: 'Async / Await',
+            gujarati: 'એસિંક / અવેઇટ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-clock" style="color:#1a2a6c;"></i> 19. Async / Await <span class="badge">એસિંક / અવેઇટ</span></h2><div class="subtitle">Async/Await એ Asynchronous Programming માટેનું C# Feature છે.</div></div><h3>Async / Await એટલે શું?</h3><p>Async/Await એ Asynchronous Code લખવા માટેની ટેકનીક છે જે UI Thread ને Block થવાથી બચાવે છે.</p><pre><span class="lang-tag">C#</span>async Task<int> GetData() { await Task.Delay(1000); return 42; }</pre><div class="info-box"><span class="label">💡 Best Practice</span><strong>Avoid async void</strong> except for Event Handlers.</div>`
+        }, {
+            id: 'extensionmethods',
+            num: 20,
+            icon: 'fa-solid fa-puzzle-piece',
+            label: 'Extension Methods',
+            gujarati: 'એક્સ્ટેન્શન મેથોડ્સ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-puzzle-piece" style="color:#1a2a6c;"></i> 20. Extension Methods <span class="badge">એક્સ્ટેન્શન મેથોડ્સ</span></h2><div class="subtitle">Extension Method એ Existing Class માં Source Code બદલ્યા વગર નવો Method ઉમેરે છે.</div></div><h3>Extension Method એટલે શું?</h3><p>Extension Method એ Static Method છે જે Existing Class માં નવો Method ઉમેર્યો હોય તેમ વર્તે છે.</p><pre><span class="lang-tag">C#</span>public static class StringExtension { public static int WordCount(this string text) { return text.Split(' ').Length; } } string name = "Hello World"; Console.WriteLine(name.WordCount()); // 2</pre>`
+        }, {
+            id: 'oop',
+            num: 21,
+            icon: 'fa-solid fa-brain',
+            label: 'OOP Concepts',
+            gujarati: 'ઓબ્જેક્ટ-ઓરિએન્ટેડ પ્રોગ્રામિંગ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-brain" style="color:#1a2a6c;"></i> 21. OOP Concepts <span class="badge">ઓબ્જેક્ટ-ઓરિએન્ટેડ પ્રોગ્રામિંગ</span></h2><div class="subtitle">OOP ના મુખ્ય સિદ્ધાંતો: Class, Object, Interface, Abstract Class, Inheritance, Polymorphism, Encapsulation, Abstraction.</div></div><h3>OOP એટલે શું?</h3><p>Object-Oriented Programming (OOP) એ Programming Paradigm છે જે <strong>Objects</strong> અને <strong>Classes</strong> પર આધારિત છે.</p><div class="two-col"><div class="col"><h4>મુખ્ય Concepts</h4><ul><li>Class — Blueprint</li><li>Object — Instance</li><li>Inheritance — Parent-Child</li><li>Polymorphism — Many Forms</li><li>Encapsulation — Data Hiding</li><li>Abstraction — Hide Complexity</li><li>Interface — Contract</li><li>Abstract Class — Partial Implementation</li></ul></div><div class="col"><h4>Practice Hierarchy</h4><div class="flow-chart" style="text-align:left;"><strong>Person</strong> (Base)<br />&nbsp;&nbsp;↓<br /><strong>Employee</strong> (Derived)<br />&nbsp;&nbsp;↓<br /><strong>Doctor</strong> (Derived)</div></div></div><div class="info-box"><span class="label">💼 Interview Favorite</span>OOP Concepts, Inheritance vs Composition, Polymorphism, Interfaces vs Abstract Classes.</div>`
+        }, {
+            id: 'webapi',
+            num: 22,
+            icon: 'fa-solid fa-cloud-arrow-up',
+            label: 'ASP.NET Core Web API',
+            gujarati: 'એએસપી.નેટ કોર વેબ API',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-cloud-arrow-up" style="color:#1a2a6c;"></i> 22. ASP.NET Core Web API <span class="badge">વેબ API</span></h2><div class="subtitle">RESTful APIs બનાવવા માટેનું Framework.</div></div><h3>Web API એટલે શું?</h3><p>Web API એ HTTP Services છે જે JSON/XML Data આપે છે.</p><h3>Practice Endpoints</h3><ul><li>GET /employees — All</li><li>GET /employees/{id} — Single</li><li>POST /employees — Add</li><li>PUT /employees/{id} — Update</li><li>DELETE /employees/{id} — Delete</li></ul><h3>Key Concepts</h3><ul><li>Routing</li><li>Dependency Injection</li><li>Middleware</li><li>Logging</li><li>Authentication (JWT)</li><li>Authorization</li><li>Swagger</li><li>Model Validation</li><li>DTO</li><li>Repository Pattern</li><li>Service Layer</li></ul>`
+        }, {
+            id: 'mvc',
+            num: 23,
+            icon: 'fa-solid fa-laptop',
+            label: 'ASP.NET MVC',
+            gujarati: 'એએસપી.નેટ એમવીસી',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-laptop" style="color:#1a2a6c;"></i> 23. ASP.NET MVC <span class="badge">એમવીસી</span></h2><div class="subtitle">Model-View-Controller Pattern based Web Framework.</div></div><h3>MVC એટલે શું?</h3><p>MVC એ Design Pattern છે જે Application ને ત્રણ ભાગોમાં વિભાજિત કરે છે: <strong>Model</strong> (Data), <strong>View</strong> (UI), <strong>Controller</strong> (Logic).</p><h3>Practice Topics</h3><ul><li>Login Page</li><li>Dashboard</li><li>CRUD</li><li>Forms</li><li>Razor Views</li><li>Validation</li><li>Session &amp; TempData</li><li>ViewBag / ViewData</li></ul>`
+        }, {
+            id: 'sqlserver',
+            num: 24,
+            icon: 'fa-solid fa-database',
+            label: 'SQL Server',
+            gujarati: 'એસક્યૂએલ સર્વર',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-database" style="color:#1a2a6c;"></i> 24. SQL Server <span class="badge">એસક્યૂએલ</span></h2><div class="subtitle">Relational Database Management System.</div></div><h3>SQL એટલે શું?</h3><p>SQL (Structured Query Language) એ Database સાથે વાતચીત કરવા માટેની ભાષા છે.</p><h3>Practice Queries</h3><ul><li>SELECT, INSERT, UPDATE, DELETE</li><li>INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL JOIN</li><li>GROUP BY, HAVING, CASE</li><li>UNION, EXISTS, CTE, Window Functions</li><li>Stored Procedures, Functions, Views, Triggers</li><li>Indexes, Execution Plan, Transactions</li></ul>`
+        }, {
+            id: 'efcore',
+            num: 25,
+            icon: 'fa-solid fa-link',
+            label: 'Entity Framework Core',
+            gujarati: 'એન્ટિટી ફ્રેમવર્ક કોર',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-link" style="color:#1a2a6c;"></i> 25. Entity Framework Core <span class="badge">EF Core</span></h2><div class="subtitle">ORM (Object-Relational Mapper) for .NET.</div></div><h3>EF Core એટલે શું?</h3><p>Entity Framework Core એ ORM છે જે Database Tables ને C# Classes માં Map કરે છે.</p><h3>Two Approaches</h3><ul><li>Database First — Existing Database</li><li>Code First — C# Classes</li></ul><h3>Key Components</h3><ul><li>DbContext</li><li>DbSet&lt;T&gt;</li><li>Migrations</li><li>Relationships: One-to-One, One-to-Many, Many-to-Many</li></ul>`
+        }, {
+            id: 'angular',
+            num: 26,
+            icon: 'fa-brands fa-angular',
+            label: 'Angular',
+            gujarati: 'એંગ્યુલર',
+            content: `<div class="topic-header"><h2><i class="fa-brands fa-angular" style="color:#1a2a6c;"></i> 26. Angular <span class="badge">એંગ્યુલર</span></h2><div class="subtitle">Frontend Framework by Google.</div></div><h3>Angular એટલે શું?</h3><p>Angular એ TypeScript-based Frontend Framework છે જે Single-Page Applications (SPA) બનાવવા માટે વપરાય છે.</p><h3>Key Concepts</h3><ul><li>Components, Modules, Routing</li><li>Services, HTTP Client</li><li>Reactive Forms, Template Forms</li><li>Pipes, Directives</li><li>Guards, Lazy Loading</li><li>RxJS (Observables)</li><li>Signals (Angular 17+)</li><li>Standalone Components</li></ul><h3>Practice Features</h3><ul><li>Employee Management (CRUD)</li><li>Login &amp; Dashboard</li><li>Pagination, Search, Sorting, Filtering</li><li>Export Excel, Charts</li></ul>`
+        }, {
+            id: 'htmlcss',
+            num: 27,
+            icon: 'fa-brands fa-html5',
+            label: 'HTML / CSS',
+            gujarati: 'એચટીએમએલ / સીએસએસ',
+            content: `<div class="topic-header"><h2><i class="fa-brands fa-html5" style="color:#1a2a6c;"></i> 27. HTML / CSS <span class="badge">એચટીએમએલ / સીએસએસ</span></h2><div class="subtitle">Web Structure and Styling.</div></div><h3>HTML / CSS એટલે શું?</h3><p>HTML એ Web Page ની Structure બનાવે છે. CSS એ Styling (Colors, Layout, Fonts) આપે છે.</p><h3>Practice Topics</h3><ul><li>Responsive Design — Media Queries</li><li>Flexbox — One-dimensional Layout</li><li>Grid — Two-dimensional Layout</li><li>Bootstrap — Popular CSS Framework</li><li>Tailwind CSS — Utility-first CSS</li></ul>`
+        }, {
+            id: 'typescript',
+            num: 28,
+            icon: 'fa-brands fa-js',
+            label: 'TypeScript',
+            gujarati: 'ટાઇપસ્ક્રિપ્ટ',
+            content: `<div class="topic-header"><h2><i class="fa-brands fa-js" style="color:#1a2a6c;"></i> 28. TypeScript <span class="badge">ટાઇપસ્ક્રિપ્ટ</span></h2><div class="subtitle">JavaScript with types.</div></div><h3>TypeScript એટલે શું?</h3><p>TypeScript એ JavaScript નો Superset છે જે Static Typing, Interfaces, Classes, Generics, etc. ઉમેરે છે.</p><h3>Key Features</h3><ul><li>Interfaces, Classes, Enums</li><li>Generics</li><li>Promises, Async/Await</li><li>Array Methods: map, filter, find, reduce, some, every</li></ul><pre><span class="lang-tag">TypeScript</span>interface Person { name: string; age: number; } const users: Person[] = [{ name: 'Rahul', age: 25 }]; const names = users.map(u => u.name);</pre>`
+        }, {
+            id: 'git',
+            num: 29,
+            icon: 'fa-brands fa-git-alt',
+            label: 'Git',
+            gujarati: 'ગિટ',
+            content: `<div class="topic-header"><h2><i class="fa-brands fa-git-alt" style="color:#1a2a6c;"></i> 29. Git <span class="badge">ગિટ</span></h2><div class="subtitle">Version Control System.</div></div><h3>Git એટલે શું?</h3><p>Git એ Distributed Version Control System છે જે Code Changes Track કરે છે.</p><h3>Essential Commands</h3><ul><li>git clone, git add, git commit, git push, git pull</li><li>git fetch, git merge, git checkout, git branch, git stash</li></ul>`
+        }, {
+            id: 'apitesting',
+            num: 30,
+            icon: 'fa-solid fa-vial',
+            label: 'API Testing',
+            gujarati: 'API ટેસ્ટિંગ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-vial" style="color:#1a2a6c;"></i> 30. API Testing <span class="badge">API ટેસ્ટિંગ</span></h2><div class="subtitle">Test APIs using Postman.</div></div><h3>API Testing એટલે શું?</h3><p>API Testing એ REST APIs ને Validate કરવાની પ્રક્રિયા છે.</p><h3>Practice with Postman</h3><ul><li>GET, POST, PUT, DELETE</li><li>Authorization — JWT Token</li><li>Headers, Form Data, JSON</li></ul>`
+        }, {
+            id: 'debugging',
+            num: 31,
+            icon: 'fa-solid fa-bug',
+            label: 'Debugging',
+            gujarati: 'ડીબગિંગ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-bug" style="color:#1a2a6c;"></i> 31. Debugging <span class="badge">ડીબગિંગ</span></h2><div class="subtitle">Find and fix issues in code.</div></div><h3>Debugging એટલે શું?</h3><p>Debugging એ Code માં Errors (Bugs) શોધીને તેને Fix કરવાની પ્રક્રિયા છે.</p><h3>Tools &amp; Techniques</h3><ul><li>Breakpoints</li><li>Watch Window</li><li>Immediate Window</li><li>Call Stack</li><li>Exception Handling</li><li>Logging</li></ul><h3>Visual Studio Shortcuts</h3><ul><li>F5 — Start Debugging</li><li>F9 — Toggle Breakpoint</li><li>F10 — Step Over</li><li>F11 — Step Into</li></ul>`
+        }, {
+            id: 'softwareprocess',
+            num: 32,
+            icon: 'fa-solid fa-users-gear',
+            label: 'Software Development Process',
+            gujarati: 'સોફ્ટવેર ડેવલપમેન્ટ પ્રક્રિયા',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-users-gear" style="color:#1a2a6c;"></i> 32. Software Development Process <span class="badge">સોફ્ટવેર ડેવલપમેન્ટ</span></h2><div class="subtitle">Agile, Scrum, and Team Collaboration.</div></div><h3>Agile &amp; Scrum</h3><ul><li>Agile — Iterative development</li><li>Scrum — Framework for Agile</li><li>Daily Stand-up, Sprint Planning, Sprint Review</li><li>Code Review, Pair Programming</li><li>QA Process, Bug Lifecycle</li></ul>`
+        }, {
+            id: 'cleancode',
+            num: 33,
+            icon: 'fa-solid fa-broom',
+            label: 'Clean Code',
+            gujarati: 'ક્લીન કોડ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-broom" style="color:#1a2a6c;"></i> 33. Clean Code <span class="badge">ક્લીન કોડ</span></h2><div class="subtitle">Write readable, maintainable, and reusable code.</div></div><h3>Clean Code Principles</h3><ul><li>✔ Meaningful variable names</li><li>✔ Small methods</li><li>✔ Reusable code</li><li>✔ SOLID Principles</li><li>✔ DRY Principle</li><li>✔ KISS Principle</li><li>✔ Proper folder structure</li></ul>`
+        }, {
+            id: 'completeproject',
+            num: 34,
+            icon: 'fa-solid fa-rocket',
+            label: 'Complete Project',
+            gujarati: 'સંપૂર્ણ પ્રોજેક્ટ',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-rocket" style="color:#1a2a6c;"></i> 34. Complete Project <span class="badge">સંપૂર્ણ પ્રોજેક્ટ</span></h2><div class="subtitle">Employee Management System — End-to-End Full-Stack Project.</div></div><h3>Project: Employee Management System</h3><div class="two-col"><div class="col"><h4>Backend (.NET 8 Web API)</h4><ul><li>Authentication (JWT)</li><li>Employee CRUD</li><li>Department CRUD</li><li>Role Management</li><li>File Upload</li><li>Pagination, Search &amp; Filter</li><li>Logging (Serilog / ILogger)</li><li>Exception Handling</li><li>Repository Pattern</li><li>Service Layer</li><li>Entity Framework Core</li><li>SQL Server</li></ul></div><div class="col"><h4>Frontend (Angular)</h4><ul><li>Login Page</li><li>Dashboard</li><li>Employee List (Search, Sort, Pagination)</li><li>Add/Edit/Delete Employee</li><li>Reactive Forms</li><li>Route Guards</li><li>API Integration</li><li>Charts</li></ul></div></div><h3>Database</h3><ul><li>Employees, Departments, Roles, Users</li></ul><div class="info-box"><span class="label">💡 Why this project?</span>This project covers all major technologies: ASP.NET Core, EF Core, SQL, Angular, JWT, Repository Pattern, Service Layer.</div>`
+        }, {
+            id: 'interviewplan',
+            num: 35,
+            icon: 'fa-solid fa-list-check',
+            label: 'Interview Topics & Plan',
+            gujarati: 'ઇન્ટરવ્યૂ ટૉપિક્સ અને યોજના',
+            content: `<div class="topic-header"><h2><i class="fa-solid fa-list-check" style="color:#1a2a6c;"></i> 35. Interview Topics &amp; Plan <span class="badge">ઇન્ટરવ્યૂ ટૉપિક્સ</span></h2><div class="subtitle">What to practice for interviews and an 8-week learning roadmap.</div></div><h3>Must-Practice Interview Topics</h3><ul><li>C# OOP concepts</li><li>LINQ queries</li><li>Async/Await</li><li>Dependency Injection</li><li>Entity Framework Core</li><li>ASP.NET Core Web API</li><li>MVC lifecycle</li><li>Angular lifecycle hooks</li><li>RxJS Observables</li><li>SQL Joins and Stored Procedures</li><li>Transactions, Indexes</li><li>REST API principles</li><li>Authentication and JWT</li><li>Exception Handling</li><li>SOLID Principles</li><li>Design Patterns</li><li>Git workflow</li><li>Debugging techniques</li></ul><h3>Suggested 8-Week Learning Plan</h3><div class="plan-grid"><div class="week"><h4>Week 1</h4>C#, OOP, Collections, LINQ</div><div class="week"><h4>Week 2</h4>SQL Server: Stored Procedures, Indexes, Transactions</div><div class="week"><h4>Week 3</h4>ASP.NET Core Web API, Dependency Injection, EF Core</div><div class="week"><h4>Week 4</h4>Authentication (JWT), Logging, Middleware, Exception Handling</div><div class="week"><h4>Week 5</h4>Angular: Components, Services, Routing, Forms, RxJS</div><div class="week"><h4>Week 6</h4>Complete Employee Management System</div><div class="week"><h4>Week 7</h4>Git, Debugging, Unit Testing, Agile, Code Reviews</div><div class="week"><h4>Week 8</h4>Mock interviews, coding challenges, project polishing</div></div><div class="info-box"><span class="label">💡 Final Advice</span>Focus on fundamentals (OOP, EF Core, MVC, Design Patterns, Angular internals) and build a complete full-stack project to showcase your skills.</div>`
+        }];
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+
+        function renderSidebar() {
+            const nav = document.getElementById('sidebarNav');
+            nav.innerHTML = '';
+            TOPICS.forEach(t => {
+                const btn = document.createElement('button');
+                btn.className = 'topic-link';
+                btn.dataset.topic = t.id;
+                btn.innerHTML =
+                    `<span class="num">${String(t.num).padStart(2, '0')}</span><span class="icon"><i class="${t.icon}"></i></span><span>${t.label}</span><span style="margin-left:auto;font-size:11px;color:var(--text-light);">${t.gujarati}</span>`;
+                btn.addEventListener('click', () => { showTopic(t.id);
+                    closeSidebar(); });
+                nav.appendChild(btn);
+            });
+        }
+
+        function renderTopics() {
+            const main = document.getElementById('mainContent');
+            main.innerHTML = '';
+            TOPICS.forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'topic-card';
+                card.id = `topic-${t.id}`;
+                card.innerHTML = t.content;
+                main.appendChild(card);
+            });
+        }
+
+        function showTopic(id) {
+            document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('active'));
+            const target = document.getElementById(`topic-${id}`);
+            if (target) target.classList.add('active');
+            document.querySelectorAll('.topic-link').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector(`.topic-link[data-topic="${id}"]`);
+            if (activeBtn) activeBtn.classList.add('active');
+            history.pushState(null, '', `#${id}`);
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+
+        renderSidebar();
+        renderTopics();
+
+        const hash = window.location.hash.replace('#', '');
+        showTopic(hash || 'variables');
+
+        document.getElementById('hamburgerBtn').addEventListener('click', toggleSidebar);
+
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.getElementById('hamburgerBtn');
+            if (window.innerWidth <= 900) {
+                if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+
+        window.addEventListener('hashchange', () => {
+            const id = window.location.hash.replace('#', '') || 'variables';
+            showTopic(id);
+        });
+
+        console.log('🚀 Full-Stack Tutorial loaded — 35 Topics');
+    </script>
+
+</body>
+</html>
